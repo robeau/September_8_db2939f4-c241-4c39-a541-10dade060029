@@ -131,6 +131,25 @@
             width: 10px;
         }
 
+        #order{
+            height: 456px;
+            width: 456px;
+            border: 1px solid black;
+            background-color: aliceblue;
+            margin: 0 auto;
+        }
+
+        .blocks{
+            background-color: white;
+            height: 100px;
+            width: 100px;
+            float: left;
+            border: 2px solid black;
+            margin: 5px;
+            text-align: center;
+            font-size: 2em;
+        }
+
     </style>
     <script src="bower_components/jquery/dist/jquery.js"></script>
 </head>
@@ -163,6 +182,10 @@
     <h1>User Cards</h1>
     <div id="cards"></div>
 </section>
+<section>
+    <h1>Number Ordering</h1>
+    <div id="order"></div>
+</section>
 <script>
 
     var open = ['none','none','none'];
@@ -191,6 +214,121 @@
         setTimeout(function () {
             myCard.remove();
         },2000);
+    }
+
+    var puzzle_arr = [];
+    function shuffle(arrPiece){
+        var num = $(arrPiece).html();
+        var myIndex = -1;
+        console.log('moving pieces...', num);
+
+        puzzle_arr.forEach(function (piece,i) {
+            if (piece.index == num){
+                myIndex = i;
+            }
+        });
+
+        var myPiece = puzzle_arr[myIndex];
+        console.log(myIndex);
+        var destIndex;
+        for(var side in myPiece){
+            if (myPiece[side] === false){
+                if (side === 'rightSide'){
+                    destIndex = myIndex + 1;
+                }
+                if (side === 'leftSide'){
+                    destIndex = myIndex - 1;
+                }
+                if (side === 'topSide'){
+                    destIndex = myIndex - 4;
+                }
+                if (side === 'bottomSide'){
+                    destIndex = myIndex + 4;
+                }
+
+                var temp = puzzle_arr[myIndex];
+                puzzle_arr[myIndex] = puzzle_arr[destIndex];
+                puzzle_arr[destIndex] = temp;
+
+                checkSides();
+                writePuzzle();
+            }
+        }
+    }
+
+    function checkSides(){
+        var blank;
+        puzzle_arr.forEach(function (piece,i) {
+            if (piece.index == 15){
+               blank = i;
+            }
+        });
+
+        puzzle_arr.forEach(function (piece,i) {
+            if(i - 4 == blank){
+                piece.topSide = false;
+            }
+            else{
+                piece.topSide = true;
+            }
+            if(i + 4 == blank){
+                piece.bottomSide = false;
+            }
+            else{
+                piece.bottomSide = true;
+            }
+            if(i - 1 == blank){
+                piece.leftSide = false;
+            }
+            else{
+                piece.leftSide = true;
+            }
+            if(i + 1 == blank){
+                piece.rightSide = false;
+            }
+            else{
+                piece.rightSide = true;
+            }
+        })
+    }
+
+    function writePuzzle(){
+        $('[id="order"]').empty();
+        puzzle_arr.forEach(function (piece) {
+            var newPiece = $('<div class="blocks" onclick="shuffle(this)">').html(piece.index);
+            for (var side in piece){
+                if (piece[side] === false){
+                    if (side === 'rightSide'){
+                        $(newPiece).css('border-right', '2px solid green');
+                    }
+                    else{
+                        $(newPiece).css('border-right', '2px solid black');
+                    }
+                    if (side === 'leftSide'){
+                        $(newPiece).css('border-left', '2px solid green');
+                    }
+                    else{
+                        $(newPiece).css('border-left', '2px solid black');
+                    }
+                    if (side === 'topSide'){
+                        $(newPiece).css('border-top', '2px solid green');
+                    }
+                    else{
+                        $(newPiece).css('border-top', '2px solid black');
+                    }
+                    if (side === 'bottomSide'){
+                        $(newPiece).css('border-bottom', '2px solid green');
+                    }
+                    else{
+                        $(newPiece).css('border-bottom', '2px solid black');
+                    }
+                }
+            }
+            if (piece.index === 15){
+                $(newPiece).css('visibility', 'hidden');
+            }
+            $('[id="order"]').append(newPiece);
+        });
     }
 
     $(function(){
@@ -289,7 +427,6 @@
                 user2 = {name: 'Elliot', title: 'Puppy', picture: 'el.png'},
                 user3 = {name: 'Song Bird', title: 'Guardian', picture: 'sb.png'};
         var user_arr = [user1, user2, user3];
-
         user_arr.forEach(function (user) {
             var newCard = $('<div class="card">');
             var cardInfo = $('<div class="cardDiv">').html('<p><strong>Name: </strong>' + user.name + '</p><p><strong>Job Title: </strong>' + user.title + '</p>');
@@ -297,6 +434,57 @@
             $(newCard).append('<div class="cardImg"><img src="' + user.picture + '" />').append(cardInfo).append(xOut);
             $('[id="cards"]').append(newCard);
         });
+
+        // number order exercise
+        for(var i = 0; i < 16; i++){
+            puzzle_arr.push({index:i, leftSide: true, rightSide: true, topSide: true, bottomSide: true});
+        }
+        puzzle_arr[11].bottomSide = false;
+        puzzle_arr[0].rightSide = false;
+
+        var temp = puzzle_arr[0];
+        puzzle_arr[0] = puzzle_arr[9];
+        puzzle_arr[9] = temp;
+
+        temp = puzzle_arr[10];
+        puzzle_arr[10] = puzzle_arr[1];
+        puzzle_arr[1] = temp;
+
+        temp = puzzle_arr[6];
+        puzzle_arr[6] = puzzle_arr[2];
+        puzzle_arr[2] = temp;
+
+        temp = puzzle_arr[12];
+        puzzle_arr[12] = puzzle_arr[3];
+        puzzle_arr[3] = temp;
+
+        temp = puzzle_arr[4];
+        puzzle_arr[4] = puzzle_arr[10];
+        puzzle_arr[10] = temp;
+
+        temp = puzzle_arr[5];
+        puzzle_arr[5] = puzzle_arr[14];
+        puzzle_arr[14] = temp;
+
+        temp = puzzle_arr[6];
+        puzzle_arr[6] = puzzle_arr[7];
+        puzzle_arr[7] = temp;
+
+        temp = puzzle_arr[7];
+        puzzle_arr[7] = puzzle_arr[14];
+        puzzle_arr[14] = temp;
+
+        temp = puzzle_arr[8];
+        puzzle_arr[8] = puzzle_arr[13];
+        puzzle_arr[13] = temp;
+
+        temp = puzzle_arr[14];
+        puzzle_arr[14] = puzzle_arr[9];
+        puzzle_arr[9] = temp;
+
+
+        writePuzzle();
+
     });
 </script>
 </body>
