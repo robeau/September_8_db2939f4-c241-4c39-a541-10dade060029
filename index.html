@@ -251,7 +251,7 @@
                 puzzle_arr[destIndex] = temp;
 
                 checkSides();
-                writePuzzle();
+                break;
             }
         }
     }
@@ -289,7 +289,9 @@
             else{
                 piece.rightSide = true;
             }
-        })
+        });
+
+        writePuzzle();
     }
 
     function writePuzzle(){
@@ -481,7 +483,6 @@
         temp = puzzle_arr[14];
         puzzle_arr[14] = puzzle_arr[9];
         puzzle_arr[9] = temp;
-
 
         writePuzzle();
 
