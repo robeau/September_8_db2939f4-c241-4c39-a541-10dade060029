@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery Exercises</title>
+    <style>
+
+        section{
+            margin-bottom: 20px;
+        }
+
+        section:nth-of-type(1){
+            height: 550px;
+        }
+        .container{
+            width: 509px;
+            position: relative;
+            float: left;
+        }
+
+        #accordion{
+            margin-top: 10px;
+        }
+
+        .sliders{
+            height: 300px;
+            width: 10px;
+            float: left;
+        }
+
+        #right{
+            float: right;
+        }
+
+        #carousel{
+            width: 534px;
+            margin-left: 50px;
+            box-sizing: border-box;
+        }
+
+        #carouselImg{
+            height: 300px;
+            width: 500px;
+            float: left;
+            position: relative;
+        }
+
+        canvas{
+            border: 1px solid black;
+            position: absolute;
+            display: none;
+        }
+        
+        .sectButton{
+            width: 800px;
+            margin-top: 2px;
+            margin-bottom: 0;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            -moz-border-radius-bottomleft: 5px;
+            -moz-border-radius-bottomright: 5px;
+        }
+
+        .sectButton:focus{
+            outline-width: 0;
+        }
+
+        .entries{
+            margin-top: 0;
+            border: 1px solid darkgray;
+            width: 788px;
+            padding: 5px 5px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            -moz-border-radius-bottomleft: 5px;
+            -moz-border-radius-bottomright: 5px;
+        }
+
+        #cards{
+            width: 600px;
+            margin: 0 auto;
+            min-height: 500px;
+            background-color: aliceblue;
+        }
+
+        .card{
+            height: 100px;
+            width: 400px;
+            border: 1px solid grey;
+            padding: 20px;
+            background-color: white;
+            margin: 5px auto;
+        }
+
+        .fade{
+            height: 100px;
+            width: 400px;
+            border: 1px solid grey;
+            padding: 20px;
+            background-color: white;
+            margin: 5px auto;
+
+            -webkit-transition: opacity 2s ease-in-out;
+            -moz-transition: opacity 2s ease-in-out;
+            -ms-transition: opacity 2s ease-in-out;
+            -o-transition: opacity 2s ease-in-out;
+            opacity: 0;
+        }
+        
+        .cardImg{
+            height: 100px;
+            width: 100px;
+            float: left;
+            border: 2px solid darkgrey;
+        }
+
+        .cardDiv{
+            height: 100px;
+            width: 200px;
+            float: left;
+            margin-left: 20px;
+        }
+
+        .xButton{
+            color: red;
+            float: right;
+            width: 10px;
+        }
+
+    </style>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+</head>
+<body>
+<section>
+    <header>
+        <h1>Cursor coordinates - X: <span id="xPos"></span>, Y: <span id="yPos"></span> </h1>
+    </header>
+    <p>Last mouse button clicked: <span id="whichMouse"></span></p>
+    <p><input type="text" /></p>
+    <div class="container" id="zoomer">
+        <h1>Image Zoom</h1>
+        <img src="billiards.jpg">
+        <label>Hover over the image to zoom.</label>
+        <canvas  width="200" height="200"></canvas>
+    </div>
+    <div class="container" id="carousel">
+        <h1>Image Carousel</h1>
+        <button class="sliders" id="left"><</button>
+        <img src="1.png" id="carouselImg" />
+        <button class="sliders" id="right">></button>
+        <label>Click the left and right buttons to change pictures.</label>
+    </div>
+</section>
+<section>
+    <h1>Accordion</h1>
+    <div id="accordion"></div>
+</section>
+<section>
+    <h1>User Cards</h1>
+    <div id="cards"></div>
+</section>
+<script>
+
+    var open = ['none','none','none'];
+
+    function toggle(button, num){
+        var name = button.innerHTML;
+
+        if(open[num] === 'none'){
+            name = name.substring(4);
+            open[num] = 'block';
+            button.innerHTML = 'v ' + name;
+            button.setAttribute('style', 'border-bottom-left-radius: 0; border-bottom-right-radius: 0; -moz-border-radius-bottomleft: 0; -moz-border-radius-bottomright: 0');
+        }
+        else{
+            name = name.substring(2);
+            open[num] = 'none';
+            button.innerHTML = '> ' + name;
+            button.setAttribute('style', 'border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; -moz-border-radius-bottomleft: 5px; -moz-border-radius-bottomright: 5px');
+        }
+
+        button.nextSibling.setAttribute('style', 'display :' + open[num]);
+    }
+
+    function removeCard (myCard){
+        $(myCard).removeClass('card').addClass('fade');
+        setTimeout(function () {
+            myCard.remove();
+        },2000);
+    }
+
+    $(function(){
+        console.log('hello from jquery');
+
+        //get mouse coords
+        $(document).mousemove(function (event) {
+            $('[id="xPos"]').html(event.pageX);
+            $('[id="yPos"]').html(event.pageY);
+        });
+
+        //disable right click
+        $(document).on('contextmenu', function () {
+            console.log('Right click has been disabled');
+            return false;
+        });
+
+        //show which mouse  button was clicked
+        $(document).mousedown(function (event) {
+            switch (event.which){
+                case 1:
+                    $('[id="whichMouse"]').html('left');
+                    break;
+                case 2:
+                    $('[id="whichMouse"]').html('middle');
+                    break;
+                case 3:
+                    $('[id="whichMouse"]').html('right');
+                    break;
+                default:
+                    $('[id="whichMouse"]').html('other');
+                    break;
+            }
+        });
+
+        //disable cut, copy, paste
+        $('input').on('copy cut paste', function (event) {
+            event.preventDefault;
+            console.log('cut, copy, and paste have been disabled');
+            return false;
+        });
+
+        //zoom image on mouseover
+        var canvas = document.querySelector('canvas');
+        var context = canvas.getContext('2d');
+        $('[id="zoomer"]').on('mousemove', function (event) {
+            var pos = $('img').position();
+            //console.log('mouse: ' + event.pageY + 'canvas')
+            if(event.pageY > pos.top + 100 && event.pageY < pos.top + 489 && event.pageX > pos.left && event.pageX < pos.left + 509){
+                $('canvas').css({top: event.pageY - 240, left: event.pageX - 100}).show();
+                context.drawImage(this.children[1],event.pageX - 50,event.pageY - 250, 100,100,0,0,200,200);
+            }
+            else{
+                $('canvas').hide();
+            }
+        });
+
+        // image carousel
+        var img_arr = ['1.png', '2.png', '3.png'],
+                currentImg,
+                i = 0;
+        $('.sliders').on('click', function () {
+            if (this.id === 'left'){
+                if(i <= 0){
+                    i = img_arr.length - 1;
+                }
+                else{
+                    i--;
+                }
+            }
+            else{
+                if(i >= img_arr.length - 1){
+                    i = 0;
+                }
+                else{
+                    i++;
+                }
+            }
+            currentImg = img_arr[i];
+            $('[id="carouselImg"]').attr('src',currentImg);
+        });
+
+        // accordion without jquery ui
+        var section1 = {name: 'Section 1', entry: 'This is sample text for Section 1 of the accordion code. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+                section2 = {name: 'Section 2', entry: 'This is sample text for Section 2 of the accordion code.'},
+                section3 = {name: 'Section 3', entry: 'This is sample text for Section 3 of the accordion code.'};
+        var accordion_arr = [section1, section2, section3];
+        accordion_arr.forEach(function (sect, i) {
+            var newSect = $('<button class="sectButton" onclick="toggle(this, ' + i + ')">').html('> ' + sect.name);
+            var entry = $('<p class="entries" style="display: none">').html(sect.entry);
+            $('[id="accordion"]').append(newSect).append(entry);
+        });
+
+        // user cards
+        var user1 = {name: 'Natalie', title: 'Web Developer', picture: 'me.png'},
+                user2 = {name: 'Elliot', title: 'Puppy', picture: 'el.png'},
+                user3 = {name: 'Song Bird', title: 'Guardian', picture: 'sb.png'};
+        var user_arr = [user1, user2, user3];
+
+        user_arr.forEach(function (user) {
+            var newCard = $('<div class="card">');
+            var cardInfo = $('<div class="cardDiv">').html('<p><strong>Name: </strong>' + user.name + '</p><p><strong>Job Title: </strong>' + user.title + '</p>');
+            var xOut = $('<div class="xButton" onclick="removeCard(this.parentElement)">').html('X');
+            $(newCard).append('<div class="cardImg"><img src="' + user.picture + '" />').append(cardInfo).append(xOut);
+            $('[id="cards"]').append(newCard);
+        });
+    });
+</script>
+</body>
+</html>
