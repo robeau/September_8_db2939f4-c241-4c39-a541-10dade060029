@@ -33,7 +33,7 @@
         }
 
         #carousel{
-            width: 534px;
+            width: 532px;
             margin-left: 50px;
             box-sizing: border-box;
         }
@@ -391,25 +391,27 @@
         // image carousel
         var img_arr = ['1.png', '2.png', '3.png'],
                 currentImg,
-                i = 0;
+                j = 0;
+        console.log('j:', j);
         $('.sliders').on('click', function () {
+            console.log('moving to image ' + j +  ' on ' + this.id);
             if (this.id === 'left'){
-                if(i <= 0){
-                    i = img_arr.length - 1;
+                if(j <= 0){
+                    j = img_arr.length - 1;
                 }
                 else{
-                    i--;
+                    j--;
                 }
             }
             else{
-                if(i >= img_arr.length - 1){
-                    i = 0;
+                if(j >= img_arr.length - 1){
+                    j = 0;
                 }
                 else{
-                    i++;
+                    j++;
                 }
             }
-            currentImg = img_arr[i];
+            currentImg = img_arr[j];
             $('[id="carouselImg"]').attr('src',currentImg);
         });
 
